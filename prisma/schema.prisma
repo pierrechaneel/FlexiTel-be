@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- Enums ----------
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum PhoneStatus {
+  UNASSIGNED
+  ACTIVE
+  SUSPENDED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELED
+}
+
+// ---------- Modèles ----------
+model User {
+  id               String            @id @default(uuid())
+  email            String            @unique
+  passwordHash     String
+  firstName        String?
+  lastName         String?
+  role             Role              @default(USER)
+  isNew            Boolean           @default(true)
+  topUpCumulative  Decimal           @default(0) @db.Decimal(10, 2)
+  wallet           Wallet?
+  phoneNumbers     PhoneNumber[]
+  invoices         Invoice[]
+  monitoredNumbers MonitoredNumber[]
+  createdAt        DateTime          @default(now())
+}
+
+model Wallet {
+  id      String  @id @default(uuid())
+  user    User    @relation(fields: [userId], references: [id])
+  userId  String  @unique
+  balance Decimal @default(0) @db.Decimal(10, 2)
+}
+
+model PhoneNumber {
+  id            String         @id @default(uuid())
+  msisdn        String         @unique
+  imsi          String         @unique
+  status        PhoneStatus    @default(UNASSIGNED)
+  user          User?          @relation(fields: [userId], references: [id])
+  userId        String?
+  subscriptions Subscription[]
+  createdAt     DateTime       @default(now())
+
+  @@index([status])
+}
+
+model Offer {
+  id            String         @id @default(uuid())
+  name          String
+  category      String
+  price         Decimal        @db.Decimal(10, 2)
+  validityDays  Int
+  quotaUnit     String
+  quotaAmount   Int
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id        String             @id @default(uuid())
+  phone     PhoneNumber        @relation(fields: [phoneId], references: [id])
+  phoneId   String
+  offer     Offer              @relation(fields: [offerId], references: [id])
+  offerId   String
+  startDate DateTime
+  endDate   DateTime
+  status    SubscriptionStatus @default(ACTIVE)
+  remaining Int
+  invoice   Invoice?
+}
+
+model Invoice {
+  id             String        @id @default(uuid())
+  userId         String
+  subscriptionId String?       @unique   // ← ajoute @unique
+
+  user           User          @relation(fields: [userId], references: [id])
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+
+  month   DateTime
+  amount  Decimal  @db.Decimal(10,2)
+  pdfUrl  String?
+  createdAt DateTime @default(now())
+}
+
+
+
+model MonitoredNumber {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  msisdn    String
+  alias     String?
+  createdAt DateTime @default(now())
+}
