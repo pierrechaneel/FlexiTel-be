@@ -1,5 +1,4 @@
-// src/auth/dto/signup.dto.ts
-import { IsEmail, IsStrongPassword, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsStrongPassword, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class SignupDto {
@@ -12,9 +11,11 @@ export class SignupDto {
   @IsStrongPassword()
   password: string;
 
-  @ApiProperty({ required: false, example: 'piero' })
+  @IsNotEmpty()
+  @ApiProperty({ required: true, example: 'piero' })
   firstName?: string;
 
-  @ApiProperty({ required: false, example: 'Asimwe' })
+  @IsNotEmpty()
+  @ApiProperty({ required: true, example: 'Asimwe' })
   lastName?: string;
 }
