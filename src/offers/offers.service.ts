@@ -11,6 +11,8 @@ import { Prisma } from '@prisma/client';
 import { CreateOfferDto } from './dto/create-offer.dto';
 import { UpdateOfferDto } from './dto/update-offer.dto';
 import { SubscribeDto } from './dto/subscribe.dto';
+import { parseISO } from 'date-fns/parseISO';
+
 
 @Injectable()
 export class OffersService {
@@ -61,6 +63,86 @@ export class OffersService {
         }
     }
 
+    async listOffersWithSubscribers(
+        params: {
+            category?: string;
+            status?: 'ACTIVE' | 'CANCELED' | 'EXPIRED' | 'ALL';
+            from?: string;
+            to?: string;
+            page?: number;
+            limit?: number;
+        },
+    ) {
+        const {
+            category,
+            status = 'ACTIVE',
+            from,
+            to,
+            page = 1,
+            limit = 50,
+        } = params;
+
+       
+        const subWhere: Prisma.SubscriptionWhereInput = {
+            ...(status !== 'ALL' ? { status } : {}),
+            ...(from ? { startDate: { gte: parseISO(from) } } : {}),
+            ...(to ? { startDate: { lte: parseISO(to) } } : {}),
+        };
+
+       
+        const take = Math.min(Math.max(limit, 10), 100);   
+        const skip = (page - 1) * take;
+
+        const [items, total] = await this.prisma.$transaction([
+            this.prisma.offer.findMany({
+                where: category ? { category } : undefined,
+                orderBy: { price: 'asc' },
+                skip,
+                take,
+                include: {
+                    subscriptions: {
+                        where: subWhere,
+                        select: {
+                            startDate: true,
+                            status: true,
+                            phone: {
+                                select: {
+                                    msisdn: true,
+                                    user: {
+                                        select: {
+                                            firstName: true,
+                                            lastName: true,
+                                            email: true,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    _count: {
+                        select: {
+                            subscriptions: { where: subWhere },
+                        },
+                    },
+                },
+            }),
+            this.prisma.offer.count({
+                where: category ? { category } : undefined,
+            }),
+        ]);
+
+        return {
+            meta: {
+                page,
+                limit: take,
+                total,
+                pages: Math.ceil(total / take),
+            },
+            items,
+        };
+    }
+
+
 
     //  PUBLIC 
 
@@ -69,12 +151,6 @@ export class OffersService {
     }
 
     //USER : souscription*/
-    /**
-      * Souscrit l'utilisateur à une offre et renvoie la subscription créée + nouveau solde.
-      * @throws NotFoundException  si l'offre n'existe pas
-      * @throws ForbiddenException si solde insuffisant ou numéro non autorisé
-      * @throws ConflictException  si une souscription active existe déjà
-      */
     async subscribeToOffer(
         userId: string,
         offerId: string,
