@@ -7,6 +7,7 @@ import { OffersModule } from './offers/offers.module';
 import { PhonesModule } from './phones/phones.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { MonitoredModule } from './monitored/monitored.module';
+import { InvoicesModule } from './invoices/invoices.module';
 
 
 
@@ -39,7 +40,8 @@ import { MonitoredModule } from './monitored/monitored.module';
     OffersModule,
     PhonesModule,
     SubscriptionsModule,
-    MonitoredModule,],
+    MonitoredModule,
+    InvoicesModule,],
   providers: [],
 })
 export class AppModule { }

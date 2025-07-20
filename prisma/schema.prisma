@@ -84,24 +84,20 @@ model Subscription {
   endDate   DateTime
   status    SubscriptionStatus @default(ACTIVE)
   remaining Int
-  invoice   Invoice?
 }
 
 model Invoice {
-  id             String        @id @default(uuid())
-  userId         String
-  subscriptionId String?       @unique   // ← ajoute @unique
-
-  user           User          @relation(fields: [userId], references: [id])
-  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
-
-  month   DateTime
-  amount  Decimal  @db.Decimal(10,2)
-  pdfUrl  String?
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+  month     DateTime
+  amount    Decimal  @db.Decimal(10, 2)
+  lines     Json?
+  pdfUrl    String?
   createdAt DateTime @default(now())
+
+  @@unique([userId, month])
 }
-
-
 
 model MonitoredNumber {
   id        String   @id @default(uuid())
