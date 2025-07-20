@@ -25,27 +25,40 @@ export class UsersService {
         })
     }
 
-    async signup(data: SignupDto): Promise<PublicUser> {
-        try {
-            return await this.prismaService.user.create({
-                data: {
-                    email: data.email,
-                    firstName: data.firstName,
-                    lastName: data.lastName,
-                    passwordHash: await bcrypt.hash(data.password, 12),
-                },
-                select: {
-                    id: true,
-                    email: true,
-                    firstName: true,
-                },
-            });
-        } catch (error) {
-            if (error.code === 'P2002') {
-                throw new UnprocessableEntityException('Email already exist.')
-            }
-            throw error;
-        }
+   async signup(data: SignupDto): Promise<PublicUser> {
+    try {
+      const result = await this.prismaService.$transaction(async (tx) => {
+        const user = await tx.user.create({
+          data: {
+            email: data.email,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            passwordHash: await bcrypt.hash(data.password, 12),
+          },
+        });
 
+        await tx.wallet.create({
+          data: { userId: user.id, balance: 0 },
+        });
+
+        return user;
+      });
+
+      console.log({ userId: result.id }, 'User & wallet created');
+      return {
+        id: result.id,
+        email: result.email,
+        firstName: result.firstName,
+      };
+    } catch (err) {
+      if (
+        (err as Prisma.PrismaClientKnownRequestError).code === 'P2002'
+      ) {
+        throw new UnprocessableEntityException(
+          'Adresse e-mail déjà utilisée',
+        );
+      }
+      throw err;
     }
+  }
 }

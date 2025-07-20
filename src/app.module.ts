@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
 import { AuthModule } from './auth/auth.module';
 import { OffersModule } from './offers/offers.module';
+import { PhonesModule } from './phones/phones.module';
 
 
 
@@ -32,7 +33,8 @@ import { OffersModule } from './offers/offers.module';
     ConfigModule.forRoot(),
     UsersModule,
     AuthModule,
-    OffersModule,],
+    OffersModule,
+    PhonesModule,],
   controllers: [],
   providers: [],
 })
