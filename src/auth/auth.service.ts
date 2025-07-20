@@ -26,6 +26,10 @@ export class AuthService {
 
         const TokenPayload: TokenPayload = {
             userId: user.id,
+            email: user.email,
+            firstname: user.firstName,
+            lastname: user.lastName,
+            role: user.role
         };
         const token = this.jwtService.sign(TokenPayload);
         response.cookie('Authentication', token, {
