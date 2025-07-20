@@ -5,6 +5,8 @@ import { LoggerModule } from 'nestjs-pino';
 import { AuthModule } from './auth/auth.module';
 import { OffersModule } from './offers/offers.module';
 import { PhonesModule } from './phones/phones.module';
+import { SubscriptionsModule } from './subscriptions/subscriptions.module';
+
 
 
 
@@ -34,8 +36,8 @@ import { PhonesModule } from './phones/phones.module';
     UsersModule,
     AuthModule,
     OffersModule,
-    PhonesModule,],
-  controllers: [],
+    PhonesModule,
+    SubscriptionsModule,],
   providers: [],
 })
 export class AppModule { }
