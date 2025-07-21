@@ -38,4 +38,15 @@ export class UsersController {
         this.logger.debug({ userId: user.userId }, 'UsersController.getMe');
         return user;
     }
+
+    @Get('me-wallet')
+    @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: 'Récupérer le profil et solde du wallet' })
+    @ApiResponse({ status: 200, description: 'Profil utilisateur avec solde' })
+    async getMeWallet(
+        @CurrentUser() payload: TokenPayload
+    ) {
+        return this.userService.getProfileWithWallet(payload.userId);
+    }
+
 }
