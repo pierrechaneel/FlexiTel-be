@@ -177,7 +177,7 @@ export class OffersService {
         const alreadyActive = await this.prisma.subscription.count({
             where: { phoneId: dto.phoneId, offerId, status: 'ACTIVE' },
         });
-console.log('alreadyActive : ', alreadyActive)
+        console.log('alreadyActive : ', alreadyActive)
 
         if (alreadyActive)
             throw new ConflictException('Souscription déjà active pour ce numéro');
@@ -187,7 +187,7 @@ console.log('alreadyActive : ', alreadyActive)
             async (tx) => {
                 /* Débit wallet */
                 const updatedWallet = await tx.wallet.update({
-                    where: { userId }, 
+                    where: { userId },
                     data: { balance: { decrement: offer.price } },
                 });
 
@@ -204,34 +204,42 @@ console.log('alreadyActive : ', alreadyActive)
                     include: { offer: true },
                 });
 
-                /* facture mensuelle */
-                await tx.invoice.upsert({
-                    where: {
-                        userId_month: { userId, month: startOfMonth(new Date()) },
-                    },
-                    update: {
-                        amount: { increment: offer.price },
-                        lines: {
-                            push: {
-                                phone: phone.msisdn,
-                                offer: offer.name,
-                                price: offer.price,
+
+                const monthKey = startOfMonth(new Date());
+
+                const invoice = await tx.invoice.findUnique({
+                    where: { userId_month: { userId, month: monthKey } },
+                });
+
+                const newLine = {
+                    phone: phone.msisdn,
+                    offer: offer.name,
+                    price: offer.price,
+                };
+
+                if (invoice) {
+
+                    await tx.invoice.update({
+                        where: { id: invoice.id },
+                        data: {
+                            amount: { increment: offer.price },
+                            lines: {
+                                set: [...(invoice.lines as any[]), newLine],
                             },
                         },
-                    },
-                    create: {
-                        userId,
-                        month: startOfMonth(new Date()),
-                        amount: offer.price,
-                        lines: [
-                            {
-                                phone: phone.msisdn,
-                                offer: offer.name,
-                                price: offer.price,
-                            },
-                        ],
-                    },
-                });
+                    });
+                } else {
+                    // première facture du mois
+                    await tx.invoice.create({
+                        data: {
+                            userId,
+                            month: monthKey,
+                            amount: offer.price,
+                            lines: [newLine],
+                        },
+                    });
+                }
+
 
                 return { updatedWallet, subscription };
             },
