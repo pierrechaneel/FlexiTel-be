@@ -45,8 +45,6 @@ export class PhonesController {
         return this.phones.claimNumber(user.userId, phoneId);
     }
 
-
-    
     @ApiOperation({ summary: 'Abandonner / libérer son numéro' })
     @ApiParam({ name: 'id', description: 'ID du numéro' })
     @ApiResponse({
@@ -61,5 +59,12 @@ export class PhonesController {
         @Param('id') phoneId: string,
     ) {
         return this.phones.release(user.userId, phoneId);
+    }
+
+
+    @ApiOperation({ summary: 'Lister mes numéros' })
+    @Get("/me")
+    listMine(@CurrentUser() u: TokenPayload) {
+        return this.phones.findByUser(u.userId);
     }
 }

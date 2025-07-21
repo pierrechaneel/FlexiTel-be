@@ -103,6 +103,19 @@ export class PhonesService {
         return this.prisma.phoneNumber.update({
             where: { id: phoneId },
             data: { status: 'UNASSIGNED', userId: null },
-        }); 
+        });
+    }
+
+    async findByUser(userId: string) {
+        return this.prisma.phoneNumber.findMany({
+            where: { userId },
+            select: {
+                id: true,
+                msisdn: true,
+                imsi: true,
+                status: true,
+            },
+            orderBy: { msisdn: 'asc' },
+        });
     }
 }
