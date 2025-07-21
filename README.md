@@ -25,20 +25,52 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+## Prérequis
+
+1. **Node.js**  
+   - Version LTS (>16.x)  , ma version: v22.15.1
+  
+
+2. **npm** (ou yarn)  
+   - version : 11.4.0
+
+3. **PostgreSQL**  
+   - Un serveur PostgreSQL accessible (local ou distant)  
+   - Créez la base de données
+
+4. **Fichier d’exemple `.env`**  
+   
+   - Dupliquez le env.example :  
+     ```bash
+     cp env.example .env
+     ```
+   - Éditez `.env` pour renseigner au minimum :
+     ```dotenv
+     PORT=3005
+     DATABASE_URL="postgresql://<USER>:<PASS>@<HOST>:<PORT>/<DB_NAME>?schema=public"
+     JWT_SECRET=VotreSecretIci
+     ```
+
 ## Project setup
 
 ```bash
+# 1. Installer les dépendances
+
 $ npm install
 ```
-
-# Seeder la base de données
-
-
-
+# 2. Créer et configurer .env (voir exemple.env)
 
 ## Compile and run the project
 
 ```bash
+
+#  Générer le client
+
+$ npx prisma generate
+
+# 3. Appliquer les migrations
+
+$ npx prisma migrate deploy
 
 # Seeder la base de données : avant de lancer le projet
 $ npm run seed
@@ -67,8 +99,15 @@ $ npm run test:cov
 
 ## Documentation de l’API
 
- La documentation Swagger est disponible ici :  
+$ La documentation Swagger est disponible ici :  le port à remplacer par le vrai qui se trouve dans .env
 [Swagger UI](http://localhost:3005/api-docs)
+
+## Diagramme Entité–Relation
+
+$ Vous trouverez le schéma de la base de données dans : idem pour le port
+
+[Diagram ER](http://localhost:3005/docs/flexitel.pgerd.png)
+
 
 ```
 
