@@ -31,9 +31,18 @@
 $ npm install
 ```
 
+# Seeder la base de données
+
+
+
+
 ## Compile and run the project
 
 ```bash
+
+# Seeder la base de données : avant de lancer le projet
+$ npm run seed
+
 # development
 $ npm run start
 
@@ -55,6 +64,12 @@ $ npm run test:e2e
 
 # test coverage
 $ npm run test:cov
+
+## Documentation de l’API
+
+ La documentation Swagger est disponible ici :  
+[Swagger UI](http://localhost:3005/api-docs)
+
 ```
 
 ## Deployment
