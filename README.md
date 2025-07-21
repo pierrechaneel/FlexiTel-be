@@ -23,7 +23,29 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Description du projet
+
+**Portail B2C – Gestion d’abonnements mobiles**
+
+Ce projet est une plateforme web destinée aux clients finaux, leur permettant de gérer facilement leurs services mobiles :  
+- **Inscription et authentification** : création de compte, login/logout et gestion des rôles (`USER`, `ADMIN`).  
+- **Souscription et gestion d’offres** : parcours de souscription à des packs voix, data ou SMS, avec suivi du statut (`ACTIVE`, `EXPIRED`, `CANCELED`) et des quotas restants.  
+- **Portefeuille virtuel** : wallet relié à chaque utilisateur, avec suivi du solde et des rechargements cumulés.  
+- **Facturation** : génération mensuelle de factures simulées, stockage des lignes de facturation en JSON et possibilité de télécharger un PDF.  
+- **Surveillance de numéros** : ajout et aliasing de numéros tiers (ex : numéro d’enfant), avec historique de création et statut de chaque numéro (`UNASSIGNED`, `ACTIVE`, `SUSPENDED`).  
+- **Architecture technique** :  
+  - Backend : NestJS / TypeScript  
+  - Base de données : PostgreSQL orchestré via Prisma ORM  
+  - Modèles clés : `User`, `Wallet`, `PhoneNumber`, `Offer`, `Subscription`, `Invoice`, `MonitoredNumber`  
+  - Sécurité : gestion des rôles, hachage des mots de passe et JWT pour l’accès aux API  
+- **Points forts** :  
+  - Modélisation claire des relations entité–relation  
+  - Migrations reproductibles avec Prisma (`migrate deploy`)  
+  - Serveur statique pour diffuser le schéma ERD  
+  - Documentation interactive via Swagger UI
+
+Cette solution offre une expérience utilisateur fluide pour la gestion complète de l’abonnement mobile, tout en garantissant la cohérence des données et la simplicité de déploiement pour les développeurs.  
+
 
 ## Prérequis
 
