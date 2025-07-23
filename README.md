@@ -26,6 +26,7 @@
 ## Description du projet
 
 **Portail B2C – Gestion d’abonnements mobiles**
+demo : https://www.pierrechaneel.com/demo
 
 Ce projet est une plateforme web destinée aux clients finaux, leur permettant de gérer facilement leurs services mobiles :  
 - **Inscription et authentification** : création de compte, login/logout et gestion des rôles (`USER`, `ADMIN`).  

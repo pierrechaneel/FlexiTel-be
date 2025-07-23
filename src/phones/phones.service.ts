@@ -16,7 +16,6 @@ export class PhonesService {
 
     // ADMIN
 
-
     findAllNumber() {
         return this.prisma.phoneNumber.findMany({
             orderBy: { msisdn: 'asc' },
