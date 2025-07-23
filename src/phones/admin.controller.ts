@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth-guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
@@ -27,6 +27,12 @@ export class PhonesAdminController {
         return this.phones.createManyNumber(list);
     }
 
+
+    @Get()
+    getAl() {
+       
+        return this.phones.findAllNumber();
+    }
 
 
     @ApiOperation({ summary: 'Changer le statut d’un numéro' })

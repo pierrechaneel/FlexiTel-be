@@ -15,6 +15,14 @@ export class PhonesService {
     constructor(private prisma: PrismaService, private logger: Logger) { }
 
     // ADMIN
+
+
+    findAllNumber() {
+        return this.prisma.phoneNumber.findMany({
+            orderBy: { msisdn: 'asc' },
+        });
+    }
+
     async createManyNumber(list: CreatePhoneDto[]) {
         try {
             const result = await this.prisma.phoneNumber.createMany({ data: list });
